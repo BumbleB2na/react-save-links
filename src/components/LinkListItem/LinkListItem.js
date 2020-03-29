@@ -7,7 +7,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Link from '@material-ui/core/Link';
 import IconButton from '@material-ui/core/IconButton';
 import LinkIcon from '@material-ui/icons/Link';
-import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 const useStyles = makeStyles((theme) => ({
 	hyperlink: {
@@ -21,14 +21,28 @@ const useStyles = makeStyles((theme) => ({
 
 function ListItemButton(props) {
 	const classes = useStyles();
+
+	const handleClickHyperlink = () => {
+		alert('TODO: Open dialog to edit existing hyperlink');
+		return false;
+	};
+
 	return (
-		<ListItem className={props.visited ? classes.hyperlinkVisited : classes.hyperlink} button component="button" {...props}>
+		<ListItem className={props.visited ? classes.hyperlinkVisited : classes.hyperlink} button component="button" {...props}
+			onClick={handleClickHyperlink}
+		>
 			{props.children}
 		</ListItem>
 	);
 }
 function ListItemTextLink(props) {
 	const classes = useStyles();
+
+	const handleClickHyperlink = (e) => {
+		alert('TODO: Update hyperlink to set it to visited. Now opening hyperlink in new tab...');
+		e.stopPropagation();
+	};
+
 	return (
 		<ListItemText>
 			<Link 
@@ -37,13 +51,17 @@ function ListItemTextLink(props) {
 				href={props.url}
 				target="_blank"
 				rel="noopener noreferrer"
-				onClick={() => alert('hyperlink clicked')}
+				onClick={handleClickHyperlink}
 			>
 				{props.title || props.url}
 			</Link>
 		</ListItemText>
 	);
 }
+
+const handleClickDelete = () => {
+	alert('TODO: delete hyperlink');
+};
 
 export default class LinkListItem extends React.Component {
 	constructor(props) {
@@ -67,9 +85,9 @@ export default class LinkListItem extends React.Component {
 				/>
 				<ListItemSecondaryAction>
 					<IconButton
-						onClick={() => { alert('edit icon clicked') }}
+						onClick={handleClickDelete}
 					>
-						<EditIcon />
+						<DeleteIcon />
 					</IconButton>
 				</ListItemSecondaryAction>
 			</ListItemButton>
