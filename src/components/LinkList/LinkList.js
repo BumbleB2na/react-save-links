@@ -1,8 +1,8 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
+import Divider from '@material-ui/core/Divider';
+import LinkListItem from '../../components/LinkListItem/LinkListItem';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -11,28 +11,20 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-function ListItemLink(props) {
-	return <ListItem button component="a" {...props} />;
-}
-
 export default function LinkList() {
 	const classes = useStyles();
 	return (
 		<List className={classes.root}>
-			<ListItemLink
-				href="https://example.com"
-				target="_blank"
-				rel="noopener noreferrer"
-			>
-				<ListItemText primary="Example.com"></ListItemText>
-			</ListItemLink>
-			<ListItemLink
-				href="https://example.com"
-				target="_blank"
-				rel="noopener noreferrer"
-			>
-				<ListItemText primary="Example.com"></ListItemText>
-			</ListItemLink>
+			<LinkListItem
+				title="Example.com"
+				url="https://example.com"
+			></LinkListItem>
+			<Divider />
+			<LinkListItem
+				url="https://google.com"
+				visited="true"
+			></LinkListItem>
+			<Divider />
 		</List>
 	);
 }
