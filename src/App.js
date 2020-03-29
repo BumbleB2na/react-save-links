@@ -1,23 +1,60 @@
 import React from 'react';
-// import logo from './logo.svg';
-import './App.css';
+import { makeStyles } from '@material-ui/core/styles';
+import Box from '@material-ui/core/Box';
+import Container from '@material-ui/core/Container';
 import LinkList from './components/LinkList/LinkList';
 
+const useStyles = makeStyles((theme) => ({
+	app: {
+		minHeight: '100%',
+		display: 'flex',
+		flexDirection: 'column'
+	},
+	appHeader: {
+		paddingLeft: 20,
+		paddingRight: 20,
+		fontSize: 'calc(8px + 1vmin)',
+		backgroundColor: '#282c34', //theme.palette.primary.main,
+		color: 'white' //theme.palette.text.main
+	},
+	appHeaderH1: {
+		marginTop: 4,
+		marginBottom: -8
+	},
+	appBody: {
+		flex: 1,
+		paddingTop: 10,
+		paddingBottom: 10,
+		paddingLeft: 20,
+		paddingRight: 20,
+		backgroundColor: theme.palette.background.default, //theme.palette.background.paper
+	},
+	appFooter: {
+		paddingTop: 10,
+		paddingBottom: 10,
+		paddingLeft: 20,
+		paddingRight: 20,
+		fontSize: 'calc(8px + 1vmin)',
+		backgroundColor: '#282c34', //theme.palette.primary.main,
+		color: 'white' //theme.palette.text.main
+	}
+}));
+
 function App() {
+	const classes = useStyles();
 	return (
-		<div className="App">
-			<header className="App-header">
-				{/* <img src={logo} className="App-logo" alt="logo" /> */}
-				<h1>Save Links for Later</h1>
+		<Box className={classes.app}>
+			<header className={classes.appHeader}>
+				<h1 className={classes.appHeaderH1}>Save Links for Later</h1>
 				<p>What do you want to read, watch or listen to?</p>
 			</header>
-			<div className="App-body">
+			<Box className={classes.appBody}>
 				<LinkList />
-			</div>
-			<footer className="App-footer">
+			</Box>
+			<footer className={classes.appFooter}>
 				Copyright &copy; 2020
 			</footer>
-		</div>
+		</Box>
 	);
 }
 
