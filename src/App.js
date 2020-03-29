@@ -1,6 +1,7 @@
 import React from 'react';
 // import logo from './logo.svg';
 import './App.css';
+import LinkList from './components/LinkList/LinkList';
 
 function App() {
 	return (
@@ -11,13 +12,7 @@ function App() {
 				<p>What do you want to read, watch or listen to?</p>
 			</header>
 			<div className="App-body">
-				<a
-					href="https://example.com"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					Example.com
-        		</a>
+				<LinkList />
 			</div>
 			<footer className="App-footer">
 				Copyright &copy; 2020
