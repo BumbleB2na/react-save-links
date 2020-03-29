@@ -1,7 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
-import Container from '@material-ui/core/Container';
 import LinkList from './components/LinkList/LinkList';
 
 const useStyles = makeStyles((theme) => ({
@@ -11,29 +10,25 @@ const useStyles = makeStyles((theme) => ({
 		flexDirection: 'column'
 	},
 	appHeader: {
-		paddingLeft: 20,
-		paddingRight: 20,
+		paddingLeft: 16,
+		paddingRight: 16,
 		fontSize: 'calc(8px + 1vmin)',
 		backgroundColor: '#282c34', //theme.palette.primary.main,
 		color: 'white' //theme.palette.text.main
 	},
 	appHeaderH1: {
-		marginTop: 4,
-		marginBottom: -8
+		marginTop: 2,
+		marginBottom: -10
 	},
 	appBody: {
 		flex: 1,
-		paddingTop: 10,
-		paddingBottom: 10,
-		paddingLeft: 20,
-		paddingRight: 20,
 		backgroundColor: theme.palette.background.default, //theme.palette.background.paper
 	},
 	appFooter: {
-		paddingTop: 10,
-		paddingBottom: 10,
-		paddingLeft: 20,
-		paddingRight: 20,
+		paddingTop: 8,
+		paddingBottom: 8,
+		paddingLeft: 16,
+		paddingRight: 16,
 		fontSize: 'calc(8px + 1vmin)',
 		backgroundColor: '#282c34', //theme.palette.primary.main,
 		color: 'white' //theme.palette.text.main
