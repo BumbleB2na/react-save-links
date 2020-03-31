@@ -29,7 +29,8 @@ export default function LinkList() {
 		setStateHyperlinks(hyperlinks);
 	};
 	const createHyperlink = async (hyperlink) => {
-		alert('TODO: Create hyperlink by from data ('+JSON.stringify(hyperlink)+')');
+		const hyperlinks = await Data.createHyperlink(hyperlink);
+		setStateHyperlinks(hyperlinks);
 	};
 	const updateHyperlink = async (hyperlink) => {
 		alert('TODO: Update hyperlink by from data ('+JSON.stringify(hyperlink)+')');
