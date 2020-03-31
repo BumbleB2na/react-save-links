@@ -123,7 +123,7 @@ function LinkListItemAddDialog(props) {
 			<DialogTitle id="form-dialog-title">Save For Later</DialogTitle>
 			<DialogContent>
 				<DialogContentText>
-					What do you want to read, watch or listen to?
+					What do you want to read, watch, play or listen to?
 				</DialogContentText>
 				<TextField 
 					margin="dense" type="text" fullWidth 
