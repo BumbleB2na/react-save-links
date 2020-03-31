@@ -49,3 +49,11 @@ npm test
   * *Material UI has preference to hooks.*
   * *React team encourages use of hooks for developing new components.*
   * *We want to make child components as reusable as possible and hooks can help.*
+
+* Will be bootstrap the app on creation?
+
+    *Yes, we will use Create React App. We will add in Material UI manually because could not find a suitable template. If we choose Redux later on and decide to rebuild this, there is a recent template that combines Typescript, Redux and Material UI.*
+
+* Will there be unit tests?
+
+    *Yes, we'll use Test Driven Development (TDD) for building the Data Layer at least*
