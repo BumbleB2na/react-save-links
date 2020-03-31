@@ -13,8 +13,8 @@ const useStyles = makeStyles((theme) => ({
 		paddingLeft: 16,
 		paddingRight: 16,
 		fontSize: 'calc(8px + 1vmin)',
-		backgroundColor: '#282c34', //theme.palette.primary.main,
-		color: 'white' //theme.palette.text.main
+		backgroundColor: '#282c34',
+		color: 'white'
 	},
 	appHeaderH1: {
 		marginTop: 2,
@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 	appBody: {
 		flex: 1,
-		backgroundColor: theme.palette.background.default, //theme.palette.background.paper
+		backgroundColor: theme.palette.background.default,
 	},
 	appFooter: {
 		paddingTop: 8,
@@ -30,13 +30,14 @@ const useStyles = makeStyles((theme) => ({
 		paddingLeft: 16,
 		paddingRight: 16,
 		fontSize: 'calc(8px + 1vmin)',
-		backgroundColor: '#282c34', //theme.palette.primary.main,
-		color: 'white' //theme.palette.text.main
+		backgroundColor: '#282c34',
+		color: 'white'
 	}
 }));
 
 function App() {
 	const classes = useStyles();
+	const year = (new Date()).getFullYear();
 	return (
 		<Box className={classes.app}>
 			<header className={classes.appHeader}>
@@ -47,7 +48,7 @@ function App() {
 				<LinkList />
 			</Box>
 			<footer className={classes.appFooter}>
-				Copyright &copy; 2020
+				Copyright &copy; {year}
 			</footer>
 		</Box>
 	);
