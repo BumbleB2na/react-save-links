@@ -19,6 +19,44 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
+export default function LinkListItem(props) {
+	const handleHyperlinkClicked = () => {
+		const updatedHyperlink = {
+			id: props.id,
+			visited: true
+		};
+		props.onUpdateHyperlinkAsVisited(updatedHyperlink);
+	}
+	const handleDeleteClicked = () => {
+		const deletedHyperlink = {
+			id: props.id
+		};
+		props.onDeleteHyperlink(deletedHyperlink);
+	};
+
+	return (
+		<ListItemButton>
+			<ListItemIcon>
+				<LinkIcon />
+			</ListItemIcon>
+			<ListItemTextLink
+				id={props.id}
+				title={props.title}
+				url={props.url}
+				visited={props.visited}
+				onUpdateHyperlinkAsVisited={handleHyperlinkClicked}
+			/>
+			<ListItemSecondaryAction>
+				<IconButton
+					onClick={handleDeleteClicked}
+				>
+					<DeleteIcon />
+				</IconButton>
+			</ListItemSecondaryAction>
+		</ListItemButton>
+	);
+}
+
 function ListItemButton(props) {
 	const classes = useStyles();
 
@@ -28,26 +66,37 @@ function ListItemButton(props) {
 	};
 
 	return (
-		<ListItem className={props.visited ? classes.hyperlinkVisited : classes.hyperlink} button component="button" {...props}
+		<ListItem 
+			className={props.visited ? classes.hyperlinkVisited : classes.hyperlink} 
+			button component="button"
 			onClick={handleClickHyperlink}
 		>
 			{props.children}
 		</ListItem>
 	);
 }
+
 function ListItemTextLink(props) {
 	const classes = useStyles();
 
 	const handleClickHyperlink = (e) => {
-		alert('TODO: Update hyperlink to set it to visited. Now opening hyperlink in new tab...');
+		updateHyperlinkAsVisited();
 		e.stopPropagation();
 	};
+	const updateHyperlinkAsVisited = () => {
+		const updatedHyperlink = { 
+			id: props.id,
+			visited: true	
+		};
+		props.onUpdateHyperlinkAsVisited(updatedHyperlink);
+	}
 
 	return (
 		<ListItemText>
 			<Link 
 				className={props.visited ? classes.hyperlinkVisited : classes.hyperlink} 
-				button component="a"
+				button="true" 
+				component="a"
 				href={props.url}
 				target="_blank"
 				rel="noopener noreferrer"
@@ -57,40 +106,4 @@ function ListItemTextLink(props) {
 			</Link>
 		</ListItemText>
 	);
-}
-
-const handleClickDelete = () => {
-	alert('TODO: delete hyperlink');
-};
-
-export default class LinkListItem extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			title: this.props.title || '',
-			url: this.props.url || 'https://',
-			visited: this.props.visited || false
-		}
-	}
-	render() {
-		return (
-			<ListItemButton>
-				<ListItemIcon>
-					<LinkIcon />
-				</ListItemIcon>
-				<ListItemTextLink
-					title={this.state.title}
-					url={this.state.url}
-					visited={this.state.visited}
-				/>
-				<ListItemSecondaryAction>
-					<IconButton
-						onClick={handleClickDelete}
-					>
-						<DeleteIcon />
-					</IconButton>
-				</ListItemSecondaryAction>
-			</ListItemButton>
-		);
-	}
 }

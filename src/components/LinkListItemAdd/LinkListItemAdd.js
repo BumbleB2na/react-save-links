@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -15,59 +15,87 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 const useStyles = makeStyles((theme) => ({
-	newHyperlink: {
+	addHyperlink: {
 		color: theme.palette.text.hint
-	},
-	hyperlinkVisited: {
-		color: 'purple',
-		textDecorationLine: 'line-through'
 	},
 }));
 
-function ListItemAddButtonDialog(props) {
+export default function LinkListItemAdd(props) {
 	const classes = useStyles();
-	const [stateIsDialogOpen, setStateIsDialogOpen] = React.useState(false);
-	const [stateUrl, setStateUrl] = React.useState(props.url);
-	const [stateTitle, setStateTitle] = React.useState(props.title);
+
+	// constructor
+	const [stateIsDialogOpen, setStateIsDialogOpen] = useState(false);
 	
-	const resetInputState = () => {
-		setStateTitle('');
-		setStateUrl('https://');
-	};	
 	const handleClickToOpenDialog = () => {
 		setStateIsDialogOpen(true);
+	};
+	const handleCloseDialog = () => {
+		setStateIsDialogOpen(false);
+	};
+
+	return (
+		<React.Fragment>
+			<ListItem 
+				className={classes.addHyperlink} button component="button"
+				onClick={handleClickToOpenDialog}
+			>
+				<ListItemIcon>
+					<AddIcon />
+				</ListItemIcon>
+				<ListItemText>
+					New Hyperlink
+				</ListItemText>
+			</ListItem>
+			<LinkListItemAddDialog
+				open={stateIsDialogOpen}
+				onCloseDialog={handleCloseDialog}
+				onSaveNewHyperlink={props.onSaveNewHyperlink}
+			/>
+		</React.Fragment>
+	);
+}
+
+function LinkListItemAddDialog(props) {
+	const DEFAULT_TITLE = '';
+	const DEFAULT_URL = 'https://';
+
+	// constructor
+	const [stateTitle, setStateTitle] = useState(props.title || DEFAULT_TITLE);
+	const [stateUrl, setStateUrl] = useState(props.url || DEFAULT_URL);
+	const [stateUrlError, setStateUrlError] = useState(null);
+	
+	const resetInputState = () => {
+		setStateTitle(props.title || DEFAULT_TITLE);
+		setStateUrl(props.url || DEFAULT_URL);
+		setStateUrlError(null);
 	};
 	const handleClickSaveForLaterButton = () => {
 		const isUrlEmpty = stateUrl.trim() === '';
 		if(isUrlEmpty) {
-			showAlertMessage('Whoops','You must enter a hyperlink to be saved for later');
+			setStateUrlError('You must enter a hyperlink to be saved for later. E.g. "https://example.com"');
 			return;
 		}
 		const isTheUrlValid = isUrlValid(stateUrl);
 		if(!isTheUrlValid) {
-			showAlertMessage('Whoops','The hyperlink you entered is not valid');
+			setStateUrlError('The hyperlink you entered is not valid. Valid example: "https://example.com"');
 			return;
 		}
-		saveHyperlink();
+		setStateUrlError(null);
+		saveNewHyperlink();
 		handleClose();
-	};
-	const showAlertMessage = (title, msg) => {
-		alert(title + ': ' + msg);
 	};
 	const isUrlValid = (url) => {
 		var isValid = url.length > 9 && (url.substr(0, 7) === 'http://' || url.substr(0, 8) === 'https://');
 		return isValid;
 	};
-	const saveHyperlink = async () => {
+	const saveNewHyperlink = () => {
 		let newHyperlink = createHyperlinkFromState();
-
-		alert('TODO: Create new hyperlink from state: '+ JSON.stringify(newHyperlink));
+		props.onSaveNewHyperlink(newHyperlink);
 	};
 	const createHyperlinkFromState = () => {		
 		let hyperlink = {
-			url: stateUrl.trim(),
-			visited: false,
-			createdOn: (new Date()).toISOString()
+			title: (stateTitle) ? stateTitle.trim() : DEFAULT_TITLE,
+			url: stateUrl.trim()
 		}
 		if(stateTitle)
 			hyperlink.title = stateTitle;
@@ -79,86 +107,56 @@ function ListItemAddButtonDialog(props) {
 			handleClickSaveForLaterButton();
 	};
 	const handleClose = () => {
-		setStateIsDialogOpen(false);
+		props.onCloseDialog();
+
 		setTimeout(() => {
 			resetInputState();
 		}, 1000);
 	};
 
 	return (
-		<div>
-			<ListItem className={classes.newHyperlink} button component="button" {...props}
-				onClick={handleClickToOpenDialog}
-			>
-				<ListItemIcon>
-					<AddIcon />
-				</ListItemIcon>
-				<ListItemText>
-					New Hyperlink
-				</ListItemText>
-			</ListItem>
-			<Dialog open={stateIsDialogOpen} onClose={handleClose} aria-labelledby="form-dialog-title">
-				<DialogTitle id="form-dialog-title">Save For Later</DialogTitle>
-				<DialogContent>
-					<DialogContentText>
-						What do you want to read, watch or listen to?
-					</DialogContentText>
-					<TextField
-						margin="dense"
-						id="title"
-						label="Title (optional)"
-						type="text"
-						fullWidth
-						value={stateTitle}
-						onChange={e => setStateTitle(e.target.value)}
-					/>
-					<TextField
-						autoFocus
-						margin="dense"
-						id="url"
-						label="Url"
-						type="text"
-						required
-						fullWidth
-						onKeyUp={handleKeyUpUrl}
-						value={stateUrl}
-						onChange={e => setStateUrl(e.target.value)}
-					/>
-				</DialogContent>
-				<DialogActions>
-					<Button 
-						color="primary"
-						onClick={handleClose} 
-					>
-						Cancel
-					</Button>
-					<Button 
-						color="primary"
-						onClick={handleClickSaveForLaterButton} 
-					>
-						Save Link
-					</Button>
-				</DialogActions>
-			</Dialog>
-		</div>
+		<Dialog 
+			aria-labelledby="form-dialog-title"
+			open={props.open}
+			onClose={handleClose}
+		>
+			<DialogTitle id="form-dialog-title">Save For Later</DialogTitle>
+			<DialogContent>
+				<DialogContentText>
+					What do you want to read, watch or listen to?
+				</DialogContentText>
+				<TextField 
+					margin="dense" type="text" fullWidth 
+					id="title" 
+					label="Title (optional)"
+					value={stateTitle} 
+					onChange={e => setStateTitle(e.target.value)}
+				/>
+				<TextField
+					autoFocus margin="dense" type="text" required fullWidth
+					error={stateUrlError}
+					helperText={(stateUrlError) ? stateUrlError : " "}
+					id="url" 
+					label="Url"
+					onKeyUp={handleKeyUpUrl}
+					value={stateUrl}
+					onChange={e => setStateUrl(e.target.value)}
+				/>
+			</DialogContent>
+			<DialogActions>
+				<Button 
+					color="primary"
+					onClick={handleClose} 
+				>
+					Cancel
+				</Button>
+				<Button 
+					color="primary"
+					onClick={handleClickSaveForLaterButton}
+				>
+					Save Link
+				</Button>
+			</DialogActions>
+		</Dialog>
 	);
-}
-
-export default class LinkListItemAdd extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			title: this.props.title || '',
-			url: this.props.url || 'https://',
-			isDialogOpen: false
-		}
-	}
-	render() {
-		return (
-			<ListItemAddButtonDialog
-				title={this.state.title}	
-				url={this.state.url}
-			/>
-		);
-	}
 }
