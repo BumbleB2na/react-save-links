@@ -1,24 +1,24 @@
 import { mockHyperlinks } from "./DataMock";
 
-// Retains data from server
 let _hyperlinks;
 
-// Simulate calls to server
 class Data {
+
 	constructor() {
-		_hyperlinks = this.getMockHyperlinks();
+		_hyperlinks = [];
 	}
 
 	// Simulate existing data stored on a server
-	getMockHyperlinks() {
-		return mockHyperlinks.slice();
+	initMockHyperlinks() {
+		_hyperlinks = Object.assign({}, mockHyperlinks);  // make copy of mock data
 	}
 
+	// Simulate calls to server
 	getHyperlinks() {
 		return new Promise((resolve, reject) => {
 			setTimeout(() => {
-				const hyperlinks = _hyperlinks.slice().sort(this.sortDescByISOTimestamp);
-				resolve(hyperlinks);
+				const sortedHyperlinks = this.getHyperlinksArraySorted();
+				resolve(sortedHyperlinks);
 			}, 500);
 		});
 	}
@@ -26,16 +26,56 @@ class Data {
 	createHyperlink(hyperlink) {
 		return new Promise((resolve, reject) => {
 			setTimeout(() => {
-				const newHyperlink = Object.assign({}, hyperlink);  // make copy of data
-				newHyperlink["id"] = this.generateUid();
-				newHyperlink["createdOn"] = this.getISOTimestamp();
-				_hyperlinks = _hyperlinks.concat([
-					newHyperlink
-				]);
-				const hyperlinks = _hyperlinks.slice().sort(this.sortDescByISOTimestamp);
-				resolve(hyperlinks);
+				const id = this.generateUid();
+				const newHyperlink = {
+					id,
+					...hyperlink,
+					createdOn: this.getISOTimestamp()
+				};
+				const updatedHyperlinks = {
+					..._hyperlinks,
+					[id] : newHyperlink
+				};
+				_hyperlinks = updatedHyperlinks;
+
+				const sortedHyperlinks = this.getHyperlinksArraySorted();
+				resolve(sortedHyperlinks);
 			}, 500);
 		});
+	}
+	
+	updateHyperlink(hyperlink) {
+		return new Promise((resolve, reject) => {
+			setTimeout(() => {
+				let updatedHyperlinks = {
+					..._hyperlinks
+				};
+				updatedHyperlinks[hyperlink.id] = Object.assign(updatedHyperlinks[hyperlink.id], hyperlink);
+				_hyperlinks = updatedHyperlinks;
+
+				const sortedHyperlinks = this.getHyperlinksArraySorted();
+				resolve(sortedHyperlinks);
+			}, 500);
+		});
+	}
+	
+	deleteHyperlink(hyperlink) {
+		return new Promise((resolve, reject) => {
+			setTimeout(() => {
+				let updatedHyperlinks = {
+					..._hyperlinks
+				};
+				delete updatedHyperlinks[hyperlink.id];
+				_hyperlinks = updatedHyperlinks;
+
+				const sortedHyperlinks = this.getHyperlinksArraySorted();
+				resolve(sortedHyperlinks);
+			}, 500);
+		});
+	}
+
+	getHyperlinksArraySorted() {
+		return Object.entries(_hyperlinks).map(e => e[1]).sort(this.sortDescByISOTimestamp);
 	}
 
 	// generate simple unique identifier

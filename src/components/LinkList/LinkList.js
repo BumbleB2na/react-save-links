@@ -33,10 +33,12 @@ export default function LinkList() {
 		setStateHyperlinks(hyperlinks);
 	};
 	const updateHyperlink = async (hyperlink) => {
-		alert('TODO: Update hyperlink by from data ('+JSON.stringify(hyperlink)+')');
+		const hyperlinks = await Data.updateHyperlink(hyperlink);
+		setStateHyperlinks(hyperlinks);
 	};
 	const deleteHyperlink = async (hyperlink) => {
-		alert('TODO: delete hyperlink by id ('+hyperlink.id+')');
+		const hyperlinks = await Data.deleteHyperlink(hyperlink);
+		setStateHyperlinks(hyperlinks);
 	};
 
 	const linkListItemEls = stateHyperlinks.map(hyperlink => {

@@ -41,7 +41,7 @@ function App() {
 		<Box className={classes.app}>
 			<header className={classes.appHeader}>
 				<h1 className={classes.appHeaderH1}>Save Links for Later</h1>
-				<p>What do you want to read, watch or listen to?</p>
+				<p>What do you want to read, watch, play or listen to?</p>
 			</header>
 			<Box className={classes.appBody}>
 				<LinkList />
