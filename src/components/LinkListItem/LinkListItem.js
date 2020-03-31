@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -8,6 +8,8 @@ import Link from '@material-ui/core/Link';
 import IconButton from '@material-ui/core/IconButton';
 import LinkIcon from '@material-ui/icons/Link';
 import DeleteIcon from '@material-ui/icons/Delete';
+
+import LinkListItemSaveDialog from '../../components/LinkListItemSaveDialog/LinkListItemSaveDialog';
 
 const useStyles = makeStyles((theme) => ({
 	hyperlink: {
@@ -25,7 +27,7 @@ export default function LinkListItem(props) {
 			id: props.id,
 			visited: true
 		};
-		props.onUpdateHyperlinkAsVisited(updatedHyperlink);
+		props.onUpdateHyperlink(updatedHyperlink);
 	}
 	const handleDeleteClicked = () => {
 		const deletedHyperlink = {
@@ -35,7 +37,12 @@ export default function LinkListItem(props) {
 	};
 
 	return (
-		<ListItemButton>
+		<ListItemEditable
+			id={props.id}
+			title={props.title}
+			url={props.url}
+			onUpdateHyperlink={props.onUpdateHyperlink}
+		>
 			<ListItemIcon>
 				<LinkIcon />
 			</ListItemIcon>
@@ -53,26 +60,41 @@ export default function LinkListItem(props) {
 					<DeleteIcon />
 				</IconButton>
 			</ListItemSecondaryAction>
-		</ListItemButton>
+		</ListItemEditable>
 	);
 }
 
-function ListItemButton(props) {
+function ListItemEditable(props) {
 	const classes = useStyles();
-
-	const handleClickHyperlink = () => {
-		alert('TODO: Open dialog to edit existing hyperlink');
-		return false;
+	
+	// constructor
+	const [stateIsDialogOpen, setStateIsDialogOpen] = useState(false);
+	
+	const handleClickToOpenDialog = () => {
+		setStateIsDialogOpen(true);
+	};
+	const handleCloseDialog = () => {
+		setStateIsDialogOpen(false);
 	};
 
 	return (
-		<ListItem 
-			className={props.visited ? classes.hyperlinkVisited : classes.hyperlink} 
-			button component="button"
-			onClick={handleClickHyperlink}
-		>
-			{props.children}
-		</ListItem>
+		<React.Fragment>
+			<ListItem 
+				className={props.visited ? classes.hyperlinkVisited : classes.hyperlink} 
+				button component="button"
+				onClick={handleClickToOpenDialog}
+			>
+				{props.children}
+			</ListItem>
+			<LinkListItemSaveDialog
+				id={props.id}
+				title={props.title}
+				url={props.url}
+				open={stateIsDialogOpen}
+				onCloseDialog={handleCloseDialog}
+				onUpdateHyperlink={props.onUpdateHyperlink}
+			/>
+		</React.Fragment>
 	);
 }
 

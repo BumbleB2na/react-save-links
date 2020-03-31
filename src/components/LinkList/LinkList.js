@@ -49,10 +49,10 @@ export default function LinkList() {
 					title={hyperlink.title}
 					url={hyperlink.url}
 					visited={hyperlink.visited}
-					onUpdateHyperlinkAsVisited={(hyperlink) => updateHyperlink(hyperlink)}
+					onUpdateHyperlink={(hyperlink) => updateHyperlink(hyperlink)}
 					onDeleteHyperlink={(hyperlink) => deleteHyperlink(hyperlink)}
 				></LinkListItem>
-				<Divider />	
+				<Divider />
 			</React.Fragment>
 		);
 	});
