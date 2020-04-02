@@ -1,3 +1,4 @@
+import DataLocal from "./DataLocal";
 import { mockHyperlinks } from "./DataMock";
 
 let _hyperlinks;
@@ -5,16 +6,12 @@ let _hyperlinks;
 class Data {
 
 	constructor() {
-		_hyperlinks = [];
+		_hyperlinks = {};
 	}
-
-	// Simulate existing data stored on a server
-	initMockHyperlinks() {
-		_hyperlinks = Object.assign({}, mockHyperlinks);  // make copy of mock data
-	}
-
 	// Simulate calls to server
-	getHyperlinks() {
+	async getHyperlinks() {
+		await this.loadLocalHyperlinks();
+
 		return new Promise((resolve, reject) => {
 			setTimeout(() => {
 				const sortedHyperlinks = this.getHyperlinksArraySorted();
@@ -23,9 +20,9 @@ class Data {
 		});
 	}
 	
-	createHyperlink(hyperlink) {
+	async createHyperlink(hyperlink) {
 		return new Promise((resolve, reject) => {
-			setTimeout(() => {
+			setTimeout(async () => {
 				const id = this.generateUid();
 				const newHyperlink = {
 					id,
@@ -37,6 +34,8 @@ class Data {
 					[id] : newHyperlink
 				};
 				_hyperlinks = updatedHyperlinks;
+				
+				DataLocal && await DataLocal.addOrUpdateHyperlink(newHyperlink);
 
 				const sortedHyperlinks = this.getHyperlinksArraySorted();
 				resolve(sortedHyperlinks);
@@ -44,29 +43,33 @@ class Data {
 		});
 	}
 	
-	updateHyperlink(hyperlink) {
+	async updateHyperlink(hyperlink) {
 		return new Promise((resolve, reject) => {
-			setTimeout(() => {
+			setTimeout(async () => {
 				let updatedHyperlinks = {
 					..._hyperlinks
 				};
 				updatedHyperlinks[hyperlink.id] = Object.assign(updatedHyperlinks[hyperlink.id], hyperlink);
 				_hyperlinks = updatedHyperlinks;
 
+				DataLocal && await DataLocal.addOrUpdateHyperlink(updatedHyperlinks[hyperlink.id]);
+
 				const sortedHyperlinks = this.getHyperlinksArraySorted();
 				resolve(sortedHyperlinks);
 			}, 500);
 		});
 	}
 	
-	deleteHyperlink(hyperlink) {
+	async deleteHyperlink(hyperlink) {
 		return new Promise((resolve, reject) => {
-			setTimeout(() => {
+			setTimeout(async () => {
 				let updatedHyperlinks = {
 					..._hyperlinks
 				};
 				delete updatedHyperlinks[hyperlink.id];
 				_hyperlinks = updatedHyperlinks;
+
+				DataLocal && await DataLocal.deleteHyperlink(hyperlink.id);
 
 				const sortedHyperlinks = this.getHyperlinksArraySorted();
 				resolve(sortedHyperlinks);
@@ -90,7 +93,26 @@ class Data {
 
 	sortDescByISOTimestamp(a, b) {
 		return (a.createdOn > b.createdOn) ? -1 : ((a.createdOn < b.createdOn) ? 1 : 0);
+	}	
+
+	async loadLocalHyperlinks() {
+		if(DataLocal) {
+			let hyperlinks = {};
+			await DataLocal.initIndexedDb();
+			const hyperlinksArray = await DataLocal.getHyperlinks();
+			for(var i = 0; i < hyperlinksArray.length; i++) {
+				const hyperlink = Object.assign({}, hyperlinksArray[i]);  // make copy of object
+				hyperlinks[hyperlink.id] = hyperlink;
+			}
+			_hyperlinks = hyperlinks;
+		}
 	}
+
+	// For testing
+	initMockHyperlinks() {
+		_hyperlinks = Object.assign({}, mockHyperlinks);  // make copy of mock data
+	}
+
 }
 
 export default new Data();
