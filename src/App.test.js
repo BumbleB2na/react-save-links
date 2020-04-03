@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import App from './App';
-import Data from './Data';
+import Data from './services/Data';
 
 test('renders current year in copyright', () => {
 	const { getByText } = render(<App />);

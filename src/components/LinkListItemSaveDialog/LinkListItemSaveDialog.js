@@ -13,7 +13,7 @@ export default function LinkListItemSaveDialog(props) {
 
 	// constructor
 	const [stateTitle, setStateTitle] = useState(props.title || DEFAULT_TITLE);
-	const [stateUrl, setStateUrl] = useState(props.url || DEFAULT_URL);
+	const [stateUrl, setStateUrl] = useState(props.url || DEFAULT_URL);	
 	const [stateUrlError, setStateUrlError] = useState(null);
 	
 	const resetInputState = () => {
@@ -21,15 +21,21 @@ export default function LinkListItemSaveDialog(props) {
 		setStateUrl(props.url || DEFAULT_URL);
 		setStateUrlError(null);
 	};
+	
+	const ERROR = {
+		URL_EMPTY: 'You must enter a hyperlink to be saved for later. E.g. "https://example.com"',
+		URL_INVALID: 'The hyperlink you entered is not valid. Valid example: "https://example.com"',
+	};
+
 	const handleClickSaveForLaterButton = () => {
 		const isUrlEmpty = stateUrl.trim() === '';
 		if(isUrlEmpty) {
-			setStateUrlError('You must enter a hyperlink to be saved for later. E.g. "https://example.com"');
+			setStateUrlError(ERROR.URL_EMPTY);
 			return;
 		}
 		const isTheUrlValid = isUrlValid(stateUrl);
 		if(!isTheUrlValid) {
-			setStateUrlError('The hyperlink you entered is not valid. Valid example: "https://example.com"');
+			setStateUrlError(ERROR.URL_INVALID);
 			return;
 		}
 		setStateUrlError(null);

@@ -1,13 +1,17 @@
 import DataLocal from "./DataLocal";
 import { mockHyperlinks } from "./DataMock";
 
-let _hyperlinks;
-
 class Data {
 
 	constructor() {
-		_hyperlinks = {};
+		this.hyperlinks = {};
+		this.ERROR = {
+			CREATE: "Cannot create hyperlink because object already has an id property",
+			UPDATE: "Cannot update hyperlink because object has no id property",
+			DELETE: "Cannot delete hyperlink because object has no id property",
+		};
 	}
+
 	// Simulate calls to server
 	async getHyperlinks() {
 		await this.loadLocalHyperlinks();
@@ -22,6 +26,10 @@ class Data {
 	
 	async createHyperlink(hyperlink) {
 		return new Promise((resolve, reject) => {
+			if(hyperlink.id) {
+				reject(new Error(this.ERROR.CREATE));
+				return;
+			}
 			setTimeout(async () => {
 				const id = this.generateUid();
 				const newHyperlink = {
@@ -30,10 +38,10 @@ class Data {
 					createdOn: this.getISOTimestamp()
 				};
 				const updatedHyperlinks = {
-					..._hyperlinks,
+					...this.hyperlinks,
 					[id] : newHyperlink
 				};
-				_hyperlinks = updatedHyperlinks;
+				this.hyperlinks = updatedHyperlinks;
 				
 				DataLocal && await DataLocal.addOrUpdateHyperlink(newHyperlink);
 
@@ -45,12 +53,16 @@ class Data {
 	
 	async updateHyperlink(hyperlink) {
 		return new Promise((resolve, reject) => {
+			if(!hyperlink.id) {
+				reject(new Error(this.ERROR.UPDATE));
+				return;
+			}
 			setTimeout(async () => {
 				let updatedHyperlinks = {
-					..._hyperlinks
+					...this.hyperlinks
 				};
-				updatedHyperlinks[hyperlink.id] = Object.assign(updatedHyperlinks[hyperlink.id], hyperlink);
-				_hyperlinks = updatedHyperlinks;
+				updatedHyperlinks[hyperlink.id] = Object.assign(updatedHyperlinks[hyperlink.id] || {}, hyperlink);
+				this.hyperlinks = updatedHyperlinks;
 
 				DataLocal && await DataLocal.addOrUpdateHyperlink(updatedHyperlinks[hyperlink.id]);
 
@@ -62,12 +74,16 @@ class Data {
 	
 	async deleteHyperlink(hyperlink) {
 		return new Promise((resolve, reject) => {
+			if(!hyperlink.id) {
+				reject(new Error(this.ERROR.DELETE));
+				return;
+			}
 			setTimeout(async () => {
 				let updatedHyperlinks = {
-					..._hyperlinks
+					...this.hyperlinks
 				};
 				delete updatedHyperlinks[hyperlink.id];
-				_hyperlinks = updatedHyperlinks;
+				this.hyperlinks = updatedHyperlinks;
 
 				DataLocal && await DataLocal.deleteHyperlink(hyperlink.id);
 
@@ -78,7 +94,7 @@ class Data {
 	}
 
 	getHyperlinksArraySorted() {
-		return Object.entries(_hyperlinks).map(e => e[1]).sort(this.sortDescByISOTimestamp);
+		return Object.entries(this.hyperlinks).map(e => e[1]).sort(this.sortDescByISOTimestamp);
 	}
 
 	// generate simple unique identifier
@@ -96,21 +112,26 @@ class Data {
 	}	
 
 	async loadLocalHyperlinks() {
-		if(DataLocal) {
-			let hyperlinks = {};
-			await DataLocal.initIndexedDb();
-			const hyperlinksArray = await DataLocal.getHyperlinks();
-			for(var i = 0; i < hyperlinksArray.length; i++) {
-				const hyperlink = Object.assign({}, hyperlinksArray[i]);  // make copy of object
-				hyperlinks[hyperlink.id] = hyperlink;
-			}
-			_hyperlinks = hyperlinks;
-		}
+		const hyperlinks = DataLocal && await DataLocal.getHyperlinks();
+		if(!hyperlinks)
+			return;
+		this.hyperlinks = hyperlinks;
 	}
 
 	// For testing
-	initMockHyperlinks() {
-		_hyperlinks = Object.assign({}, mockHyperlinks);  // make copy of mock data
+	async initMockHyperlinks() {
+		DataLocal && await this.loadLocalHyperlinks();
+		for (const mockHyperlinkId in mockHyperlinks) {
+			if(!mockHyperlinks.hasOwnProperty(mockHyperlinkId))
+				continue;
+			const mockHyperlink = mockHyperlinks[mockHyperlinkId];
+			await this.updateHyperlink(mockHyperlink);
+		}
+	}
+	// For testing
+	async resetMockHyperlinks() {
+		DataLocal && await DataLocal.deleteIndexedDb();
+		this.hyperlinks = {};
 	}
 
 }
