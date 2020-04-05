@@ -55,19 +55,16 @@ class DataLocal {
 		// open IndexedDB store and create/upgrade the local database store if needed
 		const db = await openDB(this.DATABASE_NAME, this.DATABASE_VERSION, {
 			upgrade(upgradeDb, oldVersion, newVersion, transaction) {
-				/* tslint:disable */
-				switch (oldVersion) {  // NOTE: Not using 'break' or 'default' on purpose so, ignore compiler warnings
-					case 0:
-						// a placeholder case so that the switch block will
-						// execute when the database is first created
-						// (oldVersion is 0)
-					case 1:
-						// init version 1 of hyperlinks store
-						const store = upgradeDb.createObjectStore('hyperlinks', {
-							keyPath: 'id',
-							autoIncrement: false,  // false to use value of 'id' parameter
-						});
-						store.createIndex('createdOn', 'createdOn');
+				if(oldVersion <= 1) {
+					// init version 1 of hyperlinks store
+					const store = upgradeDb.createObjectStore('hyperlinks', {
+						keyPath: 'id',
+						autoIncrement: false,  // false to use value of 'id' parameter
+					});
+					store.createIndex('createdOn', 'createdOn');
+				}
+				if(oldVersion <= 2) {
+					// example of how to add next version upgrade when old version is 2 (ie: DATABASE_VERSION = 3)
 				}
 			},
 			blocked() {

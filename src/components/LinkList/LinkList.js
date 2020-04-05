@@ -39,24 +39,6 @@ export default function LinkList() {
 	const [isSyncing, setIsSyncing] = React.useState(false);
 	const [openSnackbarForError, setOpenSnackbarForError] = React.useState(false);
 	const [errorMessage, setErrorMessage] = React.useState('');
-  	
-	// componentDidMount / componentDidUpdate
-	React.useEffect(() => {
-		fetchHyperlinks();
-	}, []);
-
-	const handleClose = (event, reason) => {
-	  if (reason === 'clickaway') {
-		return;
-	  }  
-	  setOpenSnackbarForError(false);
-	};
-
-	const showErrorMessage = (message) => {
-		setOpenSnackbarForError(false);
-		setOpenSnackbarForError(true);
-		setErrorMessage(message);
-	}
 
 	const fetchHyperlinks = async () => {
 		try {
@@ -70,6 +52,13 @@ export default function LinkList() {
 		}
 		await syncHyperlinks();
 	};
+
+	// componentDidMount / componentDidUpdate
+	React.useEffect(() => {
+		fetchHyperlinks();
+	}, []) // eslint-disable-line react-hooks/exhaustive-deps
+	// Line above to disable eslint is a CI workaround (https://stackoverflow.com/a/60327893/285714)
+	
 	const syncHyperlinks = async () => {
 		try {
 			setIsSyncing(true);
@@ -117,6 +106,19 @@ export default function LinkList() {
 		}
 		await syncHyperlinks();
 	};
+
+	const handleClose = (event, reason) => {
+	  if (reason === 'clickaway') {
+		return;
+	  }  
+	  setOpenSnackbarForError(false);
+	};
+
+	const showErrorMessage = (message) => {
+		setOpenSnackbarForError(false);
+		setOpenSnackbarForError(true);
+		setErrorMessage(message);
+	}
 
 	const linkListItemEls = stateHyperlinks.map(hyperlink => {
 		return (
