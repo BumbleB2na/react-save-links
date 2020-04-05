@@ -56,4 +56,4 @@ npm test
 
 * Will there be unit tests?
 
-    *Yes, we'll use Test Driven Development (TDD) for building the Data Layer at least*
+    *Yes, we'll use React Testing Library and Jest. These are both recommended by React and come bundled in an app created using Create React App.*
