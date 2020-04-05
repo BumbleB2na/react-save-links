@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
@@ -7,6 +7,7 @@ import MuiAlert from '@material-ui/lab/Alert';
 import LinkListItemAdd from '../../components/LinkListItemAdd/LinkListItemAdd';
 import LinkListItem from '../../components/LinkListItem/LinkListItem';
 import Data from "../../services/Data/Data";
+import { linkListErrors } from './LinkListContants';
 
 function Alert(props) {
 	return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -23,23 +24,16 @@ export default function LinkList() {
 	const classes = useStyles();
 
 	// constructor
-	const [stateHyperlinks, setStateHyperlinks] = useState([]);
+	const [stateHyperlinks, setStateHyperlinks] = React.useState([]);
 
 	const [openSnackbarForError, setOpenSnackbarForError] = React.useState(false);
 	const [errorMessage, setErrorMessage] = React.useState('');
   	
 	// componentDidMount / componentDidUpdate
-	useEffect(() => {
+	React.useEffect(() => {
 		fetchHyperlinks();
 	}, []);
 
-	const ERROR = {
-		READ: 'Could not load hyperlinks',
-		SYNC: 'Could not sync hyperlinks',
-		CREATE: 'Could not add hyperlink',
-		UPDATE: 'Could not update hyperlink',
-		DELETE: 'Could not delete hyperlink'
-	};
 	const handleClose = (event, reason) => {
 	  if (reason === 'clickaway') {
 		return;
@@ -59,7 +53,7 @@ export default function LinkList() {
 			setStateHyperlinks(hyperlinks);
 		}
 		catch(error) {
-			showErrorMessage(ERROR.READ);
+			showErrorMessage(linkListErrors.READ);
 			console.error(error);
 		}
 		await syncHyperlinks();
@@ -70,7 +64,7 @@ export default function LinkList() {
 			setStateHyperlinks(hyperlinks);
 		}
 		catch(error) {
-			showErrorMessage(ERROR.SYNC);
+			showErrorMessage(linkListErrors.SYNC);
 			console.error(error);
 		}
 	}
@@ -80,7 +74,7 @@ export default function LinkList() {
 			setStateHyperlinks(hyperlinks);
 		}
 		catch(error) {
-			showErrorMessage(ERROR.CREATE);
+			showErrorMessage(linkListErrors.CREATE);
 			console.error(error);
 		}
 		await syncHyperlinks();
@@ -91,7 +85,7 @@ export default function LinkList() {
 			setStateHyperlinks(hyperlinks);
 		}
 		catch(error) {
-			showErrorMessage(ERROR.UPDATE);
+			showErrorMessage(linkListErrors.UPDATE);
 			console.error(error);
 		}
 		await syncHyperlinks();
@@ -102,7 +96,7 @@ export default function LinkList() {
 			setStateHyperlinks(hyperlinks);
 		}
 		catch(error) {
-			showErrorMessage(ERROR.DELETE);
+			showErrorMessage(linkListErrors.DELETE);
 			console.error(error);
 		}
 		await syncHyperlinks();

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -68,7 +68,7 @@ function ListItemEditable(props) {
 	const classes = useStyles();
 	
 	// constructor
-	const [stateIsDialogOpen, setStateIsDialogOpen] = useState(false);
+	const [stateIsDialogOpen, setStateIsDialogOpen] = React.useState(false);
 	
 	const handleClickToOpenDialog = () => {
 		setStateIsDialogOpen(true);

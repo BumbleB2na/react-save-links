@@ -1,9 +1,8 @@
 import Data from './Data';
 
 // mocks
-import '@testing-library/jest-dom/extend-expect';
 import DataLocalMock from '../../services/DataLocal/DataLocal';
-jest.mock('../../services/DataLocal/DataLocal');  // https://jestjs.io/docs/en/mock-functions#mocking-modules
+jest.mock('../../services/DataLocal/DataLocal');
 
 
 describe('without mock data', () => {

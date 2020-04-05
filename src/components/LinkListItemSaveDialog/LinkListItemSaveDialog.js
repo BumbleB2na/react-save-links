@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -6,36 +6,32 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { linkListItemSaveDialogErrors } from './LinkListItemSaveDialogContants';
 
 export default function LinkListItemSaveDialog(props) {
 	const DEFAULT_TITLE = '';
 	const DEFAULT_URL = 'https://';
 
 	// constructor
-	const [stateTitle, setStateTitle] = useState(props.title || DEFAULT_TITLE);
-	const [stateUrl, setStateUrl] = useState(props.url || DEFAULT_URL);	
-	const [stateUrlError, setStateUrlError] = useState(null);
+	const [stateTitle, setStateTitle] = React.useState(props.title || DEFAULT_TITLE);
+	const [stateUrl, setStateUrl] = React.useState(props.url || DEFAULT_URL);	
+	const [stateUrlError, setStateUrlError] = React.useState(null);
 	
 	const resetInputState = () => {
 		setStateTitle(props.title || DEFAULT_TITLE);
 		setStateUrl(props.url || DEFAULT_URL);
 		setStateUrlError(null);
 	};
-	
-	const ERROR = {
-		URL_EMPTY: 'You must enter a hyperlink to be saved for later. E.g. "https://example.com"',
-		URL_INVALID: 'The hyperlink you entered is not valid. Valid example: "https://example.com"',
-	};
 
 	const handleClickSaveForLaterButton = () => {
 		const isUrlEmpty = stateUrl.trim() === '';
 		if(isUrlEmpty) {
-			setStateUrlError(ERROR.URL_EMPTY);
+			setStateUrlError(linkListItemSaveDialogErrors.URL_EMPTY);
 			return;
 		}
 		const isTheUrlValid = isUrlValid(stateUrl);
 		if(!isTheUrlValid) {
-			setStateUrlError(ERROR.URL_INVALID);
+			setStateUrlError(linkListItemSaveDialogErrors.URL_INVALID);
 			return;
 		}
 		setStateUrlError(null);
@@ -120,6 +116,7 @@ export default function LinkListItemSaveDialog(props) {
 				<Button 
 					color="primary"
 					onClick={handleClickSaveForLaterButton}
+					data-testid="savebutton"
 				>
 					Save Link
 				</Button>
