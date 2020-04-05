@@ -4,6 +4,7 @@ import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import LinkListItemAdd from '../../components/LinkListItemAdd/LinkListItemAdd';
 import LinkListItem from '../../components/LinkListItem/LinkListItem';
 import Data from "../../services/Data/Data";
@@ -17,6 +18,15 @@ const useStyles = makeStyles((theme) => ({
 	root: {
 		paddingTop: 0,
 		paddingBottom: 0
+	},
+	progressBar: {
+		position: 'absolute',
+		width: '100%'
+	},
+	progressBarHidden: {
+		position: 'absolute',
+		width: '100%',
+		opacity: 0
 	}
 }));
 
@@ -26,6 +36,7 @@ export default function LinkList() {
 	// constructor
 	const [stateHyperlinks, setStateHyperlinks] = React.useState([]);
 
+	const [isSyncing, setIsSyncing] = React.useState(false);
 	const [openSnackbarForError, setOpenSnackbarForError] = React.useState(false);
 	const [errorMessage, setErrorMessage] = React.useState('');
   	
@@ -49,6 +60,7 @@ export default function LinkList() {
 
 	const fetchHyperlinks = async () => {
 		try {
+			setIsSyncing(true);
 			const hyperlinks = await Data.fetchHyperlinks();
 			setStateHyperlinks(hyperlinks);
 		}
@@ -60,12 +72,16 @@ export default function LinkList() {
 	};
 	const syncHyperlinks = async () => {
 		try {
+			setIsSyncing(true);
 			const hyperlinks = await Data.syncHyperlinks();
 			setStateHyperlinks(hyperlinks);
 		}
 		catch(error) {
 			showErrorMessage(linkListErrors.SYNC);
 			console.error(error);
+		}
+		finally {
+			setIsSyncing(false);
 		}
 	}
 	const createHyperlink = async (hyperlink) => {
@@ -125,7 +141,9 @@ export default function LinkList() {
 					{errorMessage}
 				</Alert>
 			</Snackbar>
+			{ isSyncing ? <LinearProgress className={classes.progressBar} /> : <LinearProgress className={classes.progressBarHidden} /> }
 			<List className={classes.root}>
+				<Divider />
 				<LinkListItemAdd
 					onSaveNewHyperlink={(hyperlink) => createHyperlink(hyperlink)}
 				/>
