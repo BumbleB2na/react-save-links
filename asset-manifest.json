@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/react-save-links/static/css/main.61611871.chunk.css",
-    "main.js": "/react-save-links/static/js/main.1adb8106.chunk.js",
-    "main.js.map": "/react-save-links/static/js/main.1adb8106.chunk.js.map",
+    "main.js": "/react-save-links/static/js/main.c575b9e6.chunk.js",
+    "main.js.map": "/react-save-links/static/js/main.c575b9e6.chunk.js.map",
     "runtime-main.js": "/react-save-links/static/js/runtime-main.93e419e8.js",
     "runtime-main.js.map": "/react-save-links/static/js/runtime-main.93e419e8.js.map",
     "static/js/2.ea79d1e7.chunk.js": "/react-save-links/static/js/2.ea79d1e7.chunk.js",
     "static/js/2.ea79d1e7.chunk.js.map": "/react-save-links/static/js/2.ea79d1e7.chunk.js.map",
     "index.html": "/react-save-links/index.html",
-    "precache-manifest.68a40ba61e7ad4092054049f9bdb2f8b.js": "/react-save-links/precache-manifest.68a40ba61e7ad4092054049f9bdb2f8b.js",
+    "precache-manifest.dc75adb22befc3d8d65c8829ab27c1d9.js": "/react-save-links/precache-manifest.dc75adb22befc3d8d65c8829ab27c1d9.js",
     "service-worker.js": "/react-save-links/service-worker.js",
     "static/css/main.61611871.chunk.css.map": "/react-save-links/static/css/main.61611871.chunk.css.map",
     "static/js/2.ea79d1e7.chunk.js.LICENSE.txt": "/react-save-links/static/js/2.ea79d1e7.chunk.js.LICENSE.txt"
@@ -17,6 +17,6 @@
     "static/js/runtime-main.93e419e8.js",
     "static/js/2.ea79d1e7.chunk.js",
     "static/css/main.61611871.chunk.css",
-    "static/js/main.1adb8106.chunk.js"
+    "static/js/main.c575b9e6.chunk.js"
   ]
 }
