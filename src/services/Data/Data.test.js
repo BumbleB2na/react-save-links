@@ -1,5 +1,11 @@
 import Data from './Data';
 
+// mocks
+import '@testing-library/jest-dom/extend-expect';
+import DataLocalMock from '../../services/DataLocal/DataLocal';
+jest.mock('../../services/DataLocal/DataLocal');  // https://jestjs.io/docs/en/mock-functions#mocking-modules
+
+
 describe('without mock data', () => {
 	it('can get hyperlinks', async () => {
 		const hyperlinks = await Data.getHyperlinks();
@@ -9,7 +15,26 @@ describe('without mock data', () => {
 
 describe('with mock data', () => {
 	beforeEach(async () => {
-		await Data.initMockHyperlinks();
+		await Data.initMockHyperlinks({
+			"3dbd8r9v65gy0iyzrgdyr" : {
+				id: "3dbd8r9v65gy0iyzrgdyr",
+				title: "Example.com",
+				url: "https://example.com",
+				visited: false,
+				createdOn: "2020-03-31T01:11:11.948Z",
+				updatedOn: "2020-03-31T01:11:11.948Z",
+				dirty: true
+			},
+			"7rm3t370equwsquzsz0nn": {
+				id: "7rm3t370equwsquzsz0nn",
+				title: "",
+				url: "https://google.com",
+				visited: true,
+				createdOn: "2020-03-31T02:22:22.948Z",
+				updatedOn: "2020-03-31T02:22:22.948Z",
+				dirty: true
+			}
+		});
 	});
 	
 	afterEach(async () => {
@@ -92,6 +117,54 @@ describe('with mock data', () => {
 		catch(error) {
 			expect(error.message).toBe(Data.ERROR.DELETE);
 		}
+	});
+
+});
+
+
+describe('syncHyperlinks()', () => {
+	beforeEach(async () => {
+		await Data.initMockHyperlinks({
+			"3dbd8r9v65gy0iyzrgdyr" : {
+				id: "3dbd8r9v65gy0iyzrgdyr",
+				title: "Example.com",
+				url: "https://example.com",
+				visited: false,
+				createdOn: "2020-03-31T01:11:11.948Z",
+				updatedOn: "2020-03-31T01:11:11.948Z",
+				dirty: true
+			},
+			"7rm3t370equwsquzsz0nn": {
+				id: "7rm3t370equwsquzsz0nn",
+				title: "",
+				url: "https://google.com",
+				visited: true,
+				createdOn: "2020-03-31T02:22:22.948Z",
+				updatedOn: "2020-03-31T02:22:22.948Z",
+				dirty: true
+			}
+		});
+	});
+	
+	afterEach(async () => {
+		await Data.resetMockHyperlinks();
+	});
+
+	it('was not automatically triggered', async () => {
+		// confirm data begins in the expected state...
+		const hyperlinks = await Data.getHyperlinks();
+		expect(hyperlinks[0].dirty).toBe(true);
+		expect(hyperlinks[1].dirty).toBe(true);
+		expect(hyperlinks[0].createdOn).toBe(hyperlinks[0].updatedOn);
+		expect(hyperlinks[1].createdOn).toBe(hyperlinks[1].updatedOn);
+	});
+
+	it('updates hyperlinks with synced versions', async () => {
+		const hyperlinks = await Data.syncHyperlinks();
+		expect(hyperlinks[0].dirty).toBe(undefined);
+		expect(hyperlinks[1].dirty).toBe(undefined);
+		expect(hyperlinks[0].createdOn).not.toBe(hyperlinks[0].updatedOn);
+		expect(hyperlinks[1].createdOn).not.toBe(hyperlinks[1].updatedOn);
 	});
 
 });

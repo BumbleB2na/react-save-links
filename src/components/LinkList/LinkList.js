@@ -6,7 +6,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import LinkListItemAdd from '../../components/LinkListItemAdd/LinkListItemAdd';
 import LinkListItem from '../../components/LinkListItem/LinkListItem';
-import Data from "../../services/Data";
+import Data from "../../services/Data/Data";
 
 function Alert(props) {
 	return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -35,6 +35,7 @@ export default function LinkList() {
 
 	const ERROR = {
 		READ: 'Could not load hyperlinks',
+		SYNC: 'Could not sync hyperlinks',
 		CREATE: 'Could not add hyperlink',
 		UPDATE: 'Could not update hyperlink',
 		DELETE: 'Could not delete hyperlink'
@@ -54,14 +55,25 @@ export default function LinkList() {
 
 	const fetchHyperlinks = async () => {
 		try {
-			const hyperlinks = await Data.getHyperlinks();
+			const hyperlinks = await Data.fetchHyperlinks();
 			setStateHyperlinks(hyperlinks);
 		}
 		catch(error) {
 			showErrorMessage(ERROR.READ);
 			console.error(error);
 		}
+		await syncHyperlinks();
 	};
+	const syncHyperlinks = async () => {
+		try {
+			const hyperlinks = await Data.syncHyperlinks();
+			setStateHyperlinks(hyperlinks);
+		}
+		catch(error) {
+			showErrorMessage(ERROR.SYNC);
+			console.error(error);
+		}
+	}
 	const createHyperlink = async (hyperlink) => {
 		try {
 			const hyperlinks = await Data.createHyperlink(hyperlink);
@@ -71,6 +83,7 @@ export default function LinkList() {
 			showErrorMessage(ERROR.CREATE);
 			console.error(error);
 		}
+		await syncHyperlinks();
 	};
 	const updateHyperlink = async (hyperlink) => {
 		try {
@@ -81,6 +94,7 @@ export default function LinkList() {
 			showErrorMessage(ERROR.UPDATE);
 			console.error(error);
 		}
+		await syncHyperlinks();
 	};
 	const deleteHyperlink = async (hyperlink) => {
 		try {
@@ -91,6 +105,7 @@ export default function LinkList() {
 			showErrorMessage(ERROR.DELETE);
 			console.error(error);
 		}
+		await syncHyperlinks();
 	};
 
 	const linkListItemEls = stateHyperlinks.map(hyperlink => {
