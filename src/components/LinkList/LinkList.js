@@ -37,8 +37,22 @@ export default function LinkList() {
 	const [stateHyperlinks, setStateHyperlinks] = React.useState([]);
 
 	const [isSyncing, setIsSyncing] = React.useState(false);
+
 	const [openSnackbarForError, setOpenSnackbarForError] = React.useState(false);
 	const [errorMessage, setErrorMessage] = React.useState('');
+
+	const handleClose = (event, reason) => {
+		if (reason === 'clickaway') {
+		  	return;
+		}  
+		setOpenSnackbarForError(false);
+	};
+  
+	const showErrorMessage = (message) => {
+		setOpenSnackbarForError(false);
+		setOpenSnackbarForError(true);
+		setErrorMessage(message);
+	}
 
 	const fetchHyperlinks = async () => {
 		try {
@@ -107,20 +121,34 @@ export default function LinkList() {
 		await syncHyperlinks();
 	};
 
-	const handleClose = (event, reason) => {
-	  if (reason === 'clickaway') {
-		return;
-	  }  
-	  setOpenSnackbarForError(false);
-	};
+	return (
+		<React.Fragment>
+			<LinkListSyncProgress
+				isSyncing={isSyncing}
+			/>
+			<List className={classes.root}>
+				<LinkListItemAdd
+					onSaveNewHyperlink={(hyperlink) => createHyperlink(hyperlink)}
+				/>
+				<Divider />
+				<LinkListItems
+					hyperlinks={stateHyperlinks}
+					onUpdateHyperlink={(hyperlink) => updateHyperlink(hyperlink)}
+					onDeleteHyperlink={(hyperlink) => deleteHyperlink(hyperlink)}
+				/>
+			</List>
+			<LinkListError
+				openSnackbarForError={openSnackbarForError}
+				handleClose={handleClose}
+				errorMessage={errorMessage}
+			/>
+		</React.Fragment>
+	);
+}
 
-	const showErrorMessage = (message) => {
-		setOpenSnackbarForError(false);
-		setOpenSnackbarForError(true);
-		setErrorMessage(message);
-	}
+function LinkListItems(props) {
 
-	const linkListItemEls = stateHyperlinks.map(hyperlink => {
+	const linkListItemEls = props.hyperlinks.map(hyperlink => {
 		return (
 			<React.Fragment key={hyperlink.id}>
 				<LinkListItem
@@ -128,9 +156,9 @@ export default function LinkList() {
 					title={hyperlink.title}
 					url={hyperlink.url}
 					visited={hyperlink.visited}
-					onUpdateHyperlink={(hyperlink) => updateHyperlink(hyperlink)}
-					onDeleteHyperlink={(hyperlink) => deleteHyperlink(hyperlink)}
-				></LinkListItem>
+					onUpdateHyperlink={props.onUpdateHyperlink}
+					onDeleteHyperlink={props.onDeleteHyperlink}
+				/>
 				<Divider />
 			</React.Fragment>
 		);
@@ -138,20 +166,31 @@ export default function LinkList() {
 
 	return (
 		<React.Fragment>
-			<Snackbar open={openSnackbarForError} autoHideDuration={6000} onClose={handleClose}>
-				<Alert onClose={handleClose} severity="error">
-					{errorMessage}
-				</Alert>
-			</Snackbar>
-			{ isSyncing ? <LinearProgress className={classes.progressBar} /> : <LinearProgress className={classes.progressBarHidden} /> }
-			<List className={classes.root}>
-				<Divider />
-				<LinkListItemAdd
-					onSaveNewHyperlink={(hyperlink) => createHyperlink(hyperlink)}
-				/>
-				<Divider />
-				{linkListItemEls}
-			</List>
+			{linkListItemEls}
 		</React.Fragment>
 	);
+}
+
+function LinkListError(props) {
+	return (
+		<Snackbar open={props.openSnackbarForError} autoHideDuration={6000} onClose={props.handleClose}>
+			<Alert onClose={props.handleClose} severity="error">
+				{props.errorMessage}
+			</Alert>
+		</Snackbar>
+	);
+}
+
+function LinkListSyncProgress(props) {
+	const classes = useStyles();
+
+	if(props.isSyncing) {
+		return (
+			<LinearProgress className={classes.progressBar} />
+		);
+	} else {
+		return (
+			<LinearProgress className={classes.progressBarHidden} />
+		);
+	}
 }
