@@ -28,7 +28,7 @@ class DataLocal {
 		await this._db.delete('hyperlinks', id);
 	}
 
-	async deleteIndexedDb() {
+	async deleteDb() {
 		this.throwErrorIfIndexedDBNotInitialized();		
 		await deleteDB(this.DATABASE_NAME, {
 			blocked() {
@@ -43,7 +43,7 @@ class DataLocal {
 		}
 	}
 
-	async initIndexedDb() {
+	async initDb() {
 		if(this._db) {
 			return;  // IndexedDB was already initialized once before
 		}
