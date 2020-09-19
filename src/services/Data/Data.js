@@ -58,7 +58,10 @@ class Data {
 		}
 		if(!updatedHyperlink.createdOn)
 			updatedHyperlink.createdOn = timestamp;
-		updatedHyperlinks[updatedHyperlink.id] = updatedHyperlink;
+		// update hyperlink in an array-like object:
+		for(var prop in updatedHyperlinks)
+			if(updatedHyperlinks[prop].id === updatedHyperlink.id)
+				updatedHyperlinks[prop] = updatedHyperlink;
 		this.hyperlinks = updatedHyperlinks;
 		return this.getHyperlinks();
 	}
@@ -101,8 +104,9 @@ class Data {
 		const unsyncedHyperlinks = this.getHyperlinksArraySorted().filter(hyperlink => hyperlink.dirty);
 		for(var i = 0; i < unsyncedHyperlinks.length; i++) {
 			const hyperlink = unsyncedHyperlinks[i];
-			const syncedHyperlink = DataServer && await DataServer.addOrUpdateHyperlink(hyperlink);
-			if(syncedHyperlink) {
+			const syncedHyperlinks = DataServer && await DataServer.addOrUpdateHyperlink(hyperlink);
+			if(syncedHyperlinks) {
+				const syncedHyperlink = syncedHyperlinks.find(h => h.id === hyperlink.id);
 				this.updateSyncedHyperlink(syncedHyperlink);
 				DataLocal && await DataLocal.addOrUpdateHyperlink(syncedHyperlink);
 			}
@@ -115,6 +119,10 @@ class Data {
 		let updatedHyperlinks = {
 			...this.hyperlinks
 		};
+		// update hyperlink in an array-like object:
+		for(var prop in updatedHyperlinks)
+			if(updatedHyperlinks[prop].id === hyperlink.id)
+				updatedHyperlinks[prop] = hyperlink;
 		updatedHyperlinks[hyperlink.id] = hyperlink;
 		this.hyperlinks = updatedHyperlinks;
 	}
@@ -138,6 +146,12 @@ class Data {
 		if(!hyperlinks)
 			return;
 		this.hyperlinks = hyperlinks;
+
+		// update local hyperlinks
+		for(var i = 0; i < hyperlinks.length; i++) {
+			const hyperlink = hyperlinks[i];
+			DataLocal && await DataLocal.addOrUpdateHyperlink(hyperlink);
+		}
 	}
 
 	// For testing -- unit, implementation or end-to-end
