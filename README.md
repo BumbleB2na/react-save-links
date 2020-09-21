@@ -29,7 +29,7 @@ npm test
 * Do we plan to use a state management library like Redux or MobX? 
 
     *No because, this is intended to be a reusable component in other projects.*
-	*However, we'll use [react-query](https://github.com/tannerlinsley/react-query) library to manage "server state" and simplify the syncing of local data with server-side data.
+	*However, we'll use [react-query](https://github.com/tannerlinsley/react-query) library to manage server state.*
 * Where should data be stored?
 
     1. *The links can be considered sensitive data so, if storing data locally avoid avoid localStorage and use IndexedDb for better front-end security*
