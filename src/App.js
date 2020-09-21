@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import LinkList from './components/LinkList/LinkList';
+import { ReactQueryDevtools } from 'react-query-devtools';
 
 const useStyles = makeStyles((theme) => ({
 	app: {
@@ -50,6 +51,7 @@ function App() {
 			<footer className={classes.appFooter}>
 				Copyright &copy; {year}
 			</footer>
+			<ReactQueryDevtools initialIsOpen />
 		</Box>
 	);
 }
