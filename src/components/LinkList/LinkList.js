@@ -36,7 +36,7 @@ export default function LinkList() {
 	// constructor
 	const [stateHyperlinks, setStateHyperlinks] = React.useState([]);
 
-	const [isSyncing, setIsSyncing] = React.useState(false);
+	const [isSyncing, setIsSyncing] = React.useState(true);
 
 	const [openSnackbarForError, setOpenSnackbarForError] = React.useState(false);
 	const [errorMessage, setErrorMessage] = React.useState('');
@@ -186,7 +186,7 @@ function LinkListSyncProgress(props) {
 
 	if(props.isSyncing) {
 		return (
-			<LinearProgress className={classes.progressBar} />
+			<LinearProgress className={classes.progressBar} data-testid="link-list-progress-bar-is-active" />
 		);
 	} else {
 		return (
