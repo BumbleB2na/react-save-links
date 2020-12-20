@@ -12,12 +12,12 @@ class Data {
 		};
 	}
 
-	async getHyperlinks() {
+	getHyperlinks() {
 		const sortedHyperlinks = this.getHyperlinksArraySorted().filter(hyperlink => !hyperlink.deleted);
 		return sortedHyperlinks;
 	}
 	
-	async createHyperlink(hyperlink) {
+	createHyperlink(hyperlink) {
 		if(hyperlink.id) {
 			throw new Error(this.ERROR.CREATE);
 		}
@@ -32,41 +32,33 @@ class Data {
 			updatedOn: timestamp,
 			dirty: true
 		};
-		const updatedHyperlinks = {
-			...this.hyperlinks,
-			[id] : newHyperlink
-		};
-		this.hyperlinks = updatedHyperlinks;
+
+		this.updateSyncedHyperlink(newHyperlink);  // calling this to avoid repeated code
 		return this.getHyperlinks();
 	}
 	
-	async updateHyperlink(hyperlink) {
+	updateHyperlink(hyperlink) {
 		if(!hyperlink.id) {
 			throw new Error(this.ERROR.UPDATE);
 		}
 
 		// update in-memory data
-		let updatedHyperlinks = {
+		let hyperlinks = {
 			...this.hyperlinks
 		};
 		const timestamp = this.getISOTimestamp();
 		const updatedHyperlink = {
-			...updatedHyperlinks[hyperlink.id],
+			...hyperlinks[hyperlink.id],
 			...hyperlink,
 			dirty: true,
 			updatedOn: timestamp
 		}
-		if(!updatedHyperlink.createdOn)
-			updatedHyperlink.createdOn = timestamp;
-		// update hyperlink in an array-like object:
-		for(var prop in updatedHyperlinks)
-			if(updatedHyperlinks[prop].id === updatedHyperlink.id)
-				updatedHyperlinks[prop] = updatedHyperlink;
-		this.hyperlinks = updatedHyperlinks;
+
+		this.updateSyncedHyperlink(updatedHyperlink);  // calling this to avoid repeated code
 		return this.getHyperlinks();
 	}
 	
-	async deleteHyperlink(hyperlink) {
+	deleteHyperlink(hyperlink) {
 		if(!hyperlink.id) {
 			throw new Error(this.ERROR.DELETE);
 		}
@@ -76,7 +68,7 @@ class Data {
 			...hyperlink,
 			deleted: true
 		}
-		return await this.updateHyperlink(deletedHyperlink);
+		return this.updateHyperlink(deletedHyperlink);
 	}
 
 	getHyperlinksArraySorted() {
@@ -104,9 +96,8 @@ class Data {
 		const unsyncedHyperlinks = this.getHyperlinksArraySorted().filter(hyperlink => hyperlink.dirty);
 		for(var i = 0; i < unsyncedHyperlinks.length; i++) {
 			const hyperlink = unsyncedHyperlinks[i];
-			const syncedHyperlinks = DataServer && await DataServer.addOrUpdateHyperlink(hyperlink);
-			if(syncedHyperlinks) {
-				const syncedHyperlink = syncedHyperlinks.find(h => h.id === hyperlink.id);
+			const syncedHyperlink = DataServer && await DataServer.addOrUpdateHyperlink(hyperlink);
+			if(syncedHyperlink) {
 				this.updateSyncedHyperlink(syncedHyperlink);
 				DataLocal && await DataLocal.addOrUpdateHyperlink(syncedHyperlink);
 			}
@@ -114,16 +105,13 @@ class Data {
 		return this.getHyperlinks();
 	}
 
-	async updateSyncedHyperlink(hyperlink) {
+	updateSyncedHyperlink(hyperlink) {
 		// update in-memory data
-		let updatedHyperlinks = {
-			...this.hyperlinks
+		// add or update hyperlink
+		const updatedHyperlinks = {
+			...this.hyperlinks,
+			[hyperlink.id]: { ...hyperlink }
 		};
-		// update hyperlink in an array-like object:
-		for(var prop in updatedHyperlinks)
-			if(updatedHyperlinks[prop].id === hyperlink.id)
-				updatedHyperlinks[prop] = hyperlink;
-		updatedHyperlinks[hyperlink.id] = hyperlink;
 		this.hyperlinks = updatedHyperlinks;
 	}
 

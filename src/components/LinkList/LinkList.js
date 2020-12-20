@@ -36,7 +36,7 @@ export default function LinkList() {
 	// constructor
 	const [stateHyperlinks, setStateHyperlinks] = React.useState([]);
 
-	const [isSyncing, setIsSyncing] = React.useState(false);
+	const [isSyncing, setIsSyncing] = React.useState(true);
 
 	const [openSnackbarForError, setOpenSnackbarForError] = React.useState(false);
 	const [errorMessage, setErrorMessage] = React.useState('');
@@ -89,7 +89,7 @@ export default function LinkList() {
 	}
 	const createHyperlink = async (hyperlink) => {
 		try {
-			const hyperlinks = await Data.createHyperlink(hyperlink);
+			const hyperlinks = Data.createHyperlink(hyperlink);
 			setStateHyperlinks(hyperlinks);
 		}
 		catch(error) {
@@ -100,7 +100,7 @@ export default function LinkList() {
 	};
 	const updateHyperlink = async (hyperlink) => {
 		try {
-			const hyperlinks = await Data.updateHyperlink(hyperlink);
+			const hyperlinks = Data.updateHyperlink(hyperlink);
 			setStateHyperlinks(hyperlinks);
 		}
 		catch(error) {
@@ -111,7 +111,7 @@ export default function LinkList() {
 	};
 	const deleteHyperlink = async (hyperlink) => {
 		try {
-			const hyperlinks = await Data.deleteHyperlink(hyperlink);
+			const hyperlinks = Data.deleteHyperlink(hyperlink);
 			setStateHyperlinks(hyperlinks);
 		}
 		catch(error) {
@@ -148,7 +148,7 @@ export default function LinkList() {
 
 function LinkListItems(props) {
 
-	const linkListItemEls = props.hyperlinks.map(hyperlink => {
+	const linkListItemEls = (props.hyperlinks || []).map(hyperlink => {
 		return (
 			<React.Fragment key={hyperlink.id}>
 				<LinkListItem
@@ -186,7 +186,7 @@ function LinkListSyncProgress(props) {
 
 	if(props.isSyncing) {
 		return (
-			<LinearProgress className={classes.progressBar} />
+			<LinearProgress className={classes.progressBar} data-testid="link-list-progress-bar-is-active" />
 		);
 	} else {
 		return (

@@ -26,9 +26,11 @@ npm test
 * Is this project for a reusable component or is it for a project such as a Single Page Application (SPA)? 
 
     *Reusable component because, we want to use it in other projects.*
-* Do we plan to use a state management library like Redux? 
+* Do we plan to use a state management library like Redux or MobX? 
 
-    *No because, this is intended to be a reusable component in other projects.*
+    *No because, this is intended to be a reusable component in other projects and state management can make it less reusable.*
+	*We will use React context sparingly for local state management.*
+	*We may use [react-query](https://github.com/tannerlinsley/react-query) library to manage server state from a cache, to help manage syncing with server. However, this app was designed to work offline and react query does not have offline support. We are doing custom server state management for now.*
 * Where should data be stored?
 
     1. *The links can be considered sensitive data so, if storing data locally avoid avoid localStorage and use IndexedDb for better front-end security*
