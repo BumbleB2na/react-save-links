@@ -97,8 +97,8 @@ export default function LinkListItemSaveDialog(props) {
 				/>
 				<TextField
 					autoFocus margin="dense" type="text" required fullWidth
-					error={stateUrlError}
-					helperText={(stateUrlError) ? stateUrlError : " "}
+					error={(stateUrlError !== null)}
+					helperText={(stateUrlError !== null) ? stateUrlError : " "}
 					id="url" 
 					label="Url"
 					onKeyUp={handleKeyUpUrl}

@@ -13,7 +13,8 @@ describe('LinkListItemSaveDialog()', () => {
 		const open = true;
 		const handleCloseDialog = jest.fn();
 		const handleUpdateHyperlink = jest.fn();
-		const { getByText } = render(
+		
+		render(
 			<LinkListItemSaveDialog 
 				id="123"
 				title=""
