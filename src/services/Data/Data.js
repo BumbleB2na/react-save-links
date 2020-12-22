@@ -153,7 +153,6 @@ class Data {
 		DataLocal && await DataLocal.deleteDb();
 		this.hyperlinks = {};
 	}
-
 }
 
 export default new Data();

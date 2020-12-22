@@ -15,7 +15,7 @@ class DataLocal {
 	async getHyperlinks() {
 		this.throwErrorIfIndexedDBNotInitialized();
 		const hyperlinksArray = await this._db.getAllFromIndex('hyperlinks', 'createdOn');
-		return hyperlinksArray && this.convertArrayToObject(hyperlinksArray, 'id');
+		return hyperlinksArray;
 	}
 
 	async addOrUpdateHyperlink(hyperlink) {
@@ -79,16 +79,6 @@ class DataLocal {
 		});
 
 		this._db = db;
-	}
-
-	// turn array of objects in to key-value object
-	convertArrayToObject(array, keyName) {
-		let objects = {};
-		for(var i = 0; i < array.length; i++) {
-			const object = Object.assign({}, array[i]);  // make copy of object
-			objects[object[keyName]] = object;
-		}
-		return objects;
 	}
 }
 
