@@ -13,7 +13,7 @@ class Data {
 	}
 
 	getHyperlinks() {
-		const sortedHyperlinks = this.getHyperlinksArraySorted().filter(hyperlink => !hyperlink.deleted);
+		const sortedHyperlinks = this.getHyperlinksSorted().filter(hyperlink => !hyperlink.deleted);
 		return sortedHyperlinks;
 	}
 	
@@ -69,7 +69,7 @@ class Data {
 		return this.updateHyperlink(deletedHyperlink);
 	}
 
-	getHyperlinksArraySorted() {
+	getHyperlinksSorted() {
 		return Object.entries(this.hyperlinks).map(e => e[1]).sort(this.sortDescByISOTimestamp);
 	}
 
@@ -91,7 +91,7 @@ class Data {
 	// FETCH AND SYNC
 
 	async syncHyperlinks() {
-		const unsyncedHyperlinks = this.getHyperlinksArraySorted().filter(hyperlink => hyperlink.dirty);
+		const unsyncedHyperlinks = this.getHyperlinksSorted().filter(hyperlink => hyperlink.dirty);
 		for(var i = 0; i < unsyncedHyperlinks.length; i++) {
 			const hyperlink = unsyncedHyperlinks[i];
 			const syncedHyperlink = DataServer && await DataServer.addOrUpdateHyperlink(hyperlink);
