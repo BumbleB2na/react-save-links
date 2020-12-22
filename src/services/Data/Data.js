@@ -4,7 +4,7 @@ import DataServer from "../../services/DataServer/DataServer"
 class Data {
 
 	constructor() {
-		this.hyperlinks = {};
+		this.hyperlinks = [];
 		this.ERROR = {
 			CREATE: "Cannot create hyperlink because object already has an id property",
 			UPDATE: "Cannot update hyperlink because object has no id property",
@@ -43,16 +43,14 @@ class Data {
 		}
 
 		// update in-memory data
-		let hyperlinks = {
-			...this.hyperlinks
-		};
 		const timestamp = this.getISOTimestamp();
-		const updatedHyperlink = {
-			...hyperlinks[hyperlink.id],
+		let updatedHyperlink = this.hyperlinks.find(h => h.id === hyperlink.id) || {};
+		updatedHyperlink = {
+			...updatedHyperlink,
 			...hyperlink,
 			dirty: true,
 			updatedOn: timestamp
-		}
+		};
 
 		this.updateSyncedHyperlink(updatedHyperlink);  // calling this to avoid repeated code
 		return this.getHyperlinks();
@@ -105,14 +103,20 @@ class Data {
 		return this.getHyperlinks();
 	}
 
-	updateSyncedHyperlink(hyperlink) {
+	updateSyncedHyperlink(syncedHyperlink) {
 		// update in-memory data
 		// add or update hyperlink
-		const updatedHyperlinks = {
-			...this.hyperlinks,
-			[hyperlink.id]: { ...hyperlink }
-		};
-		this.hyperlinks = updatedHyperlinks;
+		const doesHyperlinkExist = (this.hyperlinks.some(hyperlink => hyperlink.id === syncedHyperlink.id));
+		if(doesHyperlinkExist) {
+			this.hyperlinks = this.hyperlinks.map(hyperlink => {
+				if(hyperlink.id === syncedHyperlink.id) {
+					return syncedHyperlink;
+				}
+				return hyperlink;
+			});
+		} else {
+			this.hyperlinks.push(syncedHyperlink);
+		}
 	}
 
 	async fetchHyperlinks() {
@@ -136,6 +140,7 @@ class Data {
 		this.hyperlinks = hyperlinks;
 
 		// update local hyperlinks
+		// TODO: consider adding in logic that only updates locally if it changed?
 		for(var i = 0; i < hyperlinks.length; i++) {
 			const hyperlink = hyperlinks[i];
 			DataLocal && await DataLocal.addOrUpdateHyperlink(hyperlink);
@@ -151,8 +156,9 @@ class Data {
 	// For testing -- unit, implementation or end-to-end
 	async resetMockHyperlinks() {
 		DataLocal && await DataLocal.deleteDb();
-		this.hyperlinks = {};
+		this.hyperlinks = [];
 	}
+
 }
 
 export default new Data();

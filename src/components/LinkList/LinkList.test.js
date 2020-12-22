@@ -6,7 +6,7 @@ import Data from '../../services/Data/Data';
 import { linkListErrors } from './LinkListContants';
 
 // mocks
-import { mockHyperlinks, mockHyperlinksArray } from '../../services/Data/DataMock';
+import { mockHyperlinks } from '../../services/Data/DataMock';
 
 describe('LinkList()', () => {
 	beforeEach(() => {
@@ -31,17 +31,17 @@ describe('LinkList()', () => {
 
 	it('renders hyperlinks', async () => {
 		// Arrange - Return mock data
-		jest.spyOn(Data, 'fetchHyperlinks').mockImplementation(() => Promise.resolve(mockHyperlinksArray));
-		jest.spyOn(Data, 'syncHyperlinks').mockImplementation(() => Promise.resolve(mockHyperlinksArray));
+		jest.spyOn(Data, 'fetchHyperlinks').mockImplementation(() => Promise.resolve(mockHyperlinks));
+		jest.spyOn(Data, 'syncHyperlinks').mockImplementation(() => Promise.resolve(mockHyperlinks));
 
 		// Act
 		const { getByText, queryByTestId } = render(<LinkList />);
 		await waitForElementToBeRemoved(() => queryByTestId('link-list-progress-bar-is-active'));
 			
 		// Assert - Hyperlinks rendered from mock data
-		expect(mockHyperlinksArray.length > 1).toBeTruthy();
-		for(var i = 0; i < mockHyperlinksArray.length; i++) {
-			const mockHyperlink = mockHyperlinksArray[i];
+		expect(mockHyperlinks.length > 1).toBeTruthy();
+		for(var i = 0; i < mockHyperlinks.length; i++) {
+			const mockHyperlink = mockHyperlinks[i];
 			const hyperlinkDisplayText = (mockHyperlink.title !== '') ? mockHyperlink.title : mockHyperlink.url;
 			const hyperlinkRegex = new RegExp(hyperlinkDisplayText);
 			await waitForElement(() => getByText(hyperlinkRegex));

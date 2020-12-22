@@ -1,7 +1,7 @@
 import Data from './Data';
 
 // mocks
-import DataLocalMock from '../../services/DataLocal/DataLocal';
+import { mockHyperlinks } from '../../services/Data/DataMock';
 jest.mock('../../services/DataLocal/DataLocal');
 
 
@@ -14,26 +14,11 @@ describe('without mock data', () => {
 
 describe('with mock data', () => {
 	beforeEach(async () => {
-		await Data.initMockHyperlinks({
-			"3dbd8r9v65gy0iyzrgdyr" : {
-				id: "3dbd8r9v65gy0iyzrgdyr",
-				title: "Example.com",
-				url: "https://example.com",
-				visited: false,
-				createdOn: "2020-03-31T01:11:11.948Z",
-				updatedOn: "2020-03-31T01:11:11.948Z",
-				dirty: true
-			},
-			"7rm3t370equwsquzsz0nn": {
-				id: "7rm3t370equwsquzsz0nn",
-				title: "",
-				url: "https://google.com",
-				visited: true,
-				createdOn: "2020-03-31T02:22:22.948Z",
-				updatedOn: "2020-03-31T02:22:22.948Z",
-				dirty: true
-			}
+		let hyperlinks = mockHyperlinks.map(mockHyperlink => {
+			mockHyperlink.dirty = true;
+			return mockHyperlink;
 		});
+		await Data.initMockHyperlinks(hyperlinks);
 	});
 	
 	afterEach(async () => {
@@ -123,26 +108,11 @@ describe('with mock data', () => {
 
 describe('syncHyperlinks()', () => {
 	beforeEach(async () => {
-		await Data.initMockHyperlinks({
-			"3dbd8r9v65gy0iyzrgdyr" : {
-				id: "3dbd8r9v65gy0iyzrgdyr",
-				title: "Example.com",
-				url: "https://example.com",
-				visited: false,
-				createdOn: "2020-03-31T01:11:11.948Z",
-				updatedOn: "2020-03-31T01:11:11.948Z",
-				dirty: true
-			},
-			"7rm3t370equwsquzsz0nn": {
-				id: "7rm3t370equwsquzsz0nn",
-				title: "",
-				url: "https://google.com",
-				visited: true,
-				createdOn: "2020-03-31T02:22:22.948Z",
-				updatedOn: "2020-03-31T02:22:22.948Z",
-				dirty: true
-			}
+		let hyperlinks = mockHyperlinks.map(mockHyperlink => {
+			mockHyperlink.dirty = true;
+			return mockHyperlink;
 		});
+		await Data.initMockHyperlinks(hyperlinks);
 	});
 	
 	afterEach(async () => {
