@@ -2,13 +2,13 @@ import Data from '../../services/Data/Data';
 import DataSync from './DataSync';
 
 // mocks
-import { mockHyperlinks } from '../../services/Data/DataMock';
+import { mockLocalHyperlinks } from '../../services/DataLocal/DataLocalMock';
 jest.mock('../../services/DataLocal/DataLocal');  // https://jestjs.io/docs/en/mock-functions#mocking-modules
 
 
 describe('syncHyperlink()', () => {
 	beforeEach(async () => {
-		let hyperlinks = mockHyperlinks.map(mockHyperlink => {
+		let hyperlinks = mockLocalHyperlinks.map(mockHyperlink => {
 			mockHyperlink.dirty = true;
 			return mockHyperlink;
 		});

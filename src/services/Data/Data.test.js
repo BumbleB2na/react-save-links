@@ -1,7 +1,8 @@
 import Data from './Data';
 
 // mocks
-import { mockHyperlinks } from '../../services/Data/DataMock';
+import { mockLocalHyperlinks } from '../../services/DataLocal/DataLocalMock';
+import { mockGet, mockAddOrUpdate } from '../../services/DataServer/DataServerMock';
 jest.mock('../../services/DataLocal/DataLocal');
 
 
@@ -14,7 +15,7 @@ describe('without mock data', () => {
 
 describe('with mock data', () => {
 	beforeEach(async () => {
-		let hyperlinks = mockHyperlinks.map(mockHyperlink => {
+		let hyperlinks = mockLocalHyperlinks.map(mockHyperlink => {
 			mockHyperlink.dirty = true;
 			return mockHyperlink;
 		});
@@ -103,37 +104,28 @@ describe('with mock data', () => {
 		}
 	});
 
-});
-
-
-describe('syncHyperlinks()', () => {
-	beforeEach(async () => {
-		let hyperlinks = mockHyperlinks.map(mockHyperlink => {
-			mockHyperlink.dirty = true;
-			return mockHyperlink;
-		});
-		await Data.initMockHyperlinks(hyperlinks);
-	});
-	
-	afterEach(async () => {
-		await Data.resetMockHyperlinks();
-	});
-
-	it('was not automatically triggered', async () => {
-		// confirm data begins in the expected state...
+	// TODO: Consider changing this test so it calls a mocked DataServer.addOrUpdateHyperlink() 
+	// and asserts that it was called as expected because this test is reaching beyond scope of Data.js.
+	it('sync hyperlinks: syncs updated hyperlinks to server and updates local versions', async () => {
+		// Arrange
 		const hyperlinks = await Data.getHyperlinks();
-		expect(hyperlinks[0].dirty).toBe(true);
-		expect(hyperlinks[1].dirty).toBe(true);
-		expect(hyperlinks[0].createdOn).toBe(hyperlinks[0].updatedOn);
-		expect(hyperlinks[1].createdOn).toBe(hyperlinks[1].updatedOn);
-	});
+		// TODO: Consider using MSW instead for sharing mocked endpoints between tests and app code: https://kentcdodds.com/blog/stop-mocking-fetch
+		let fetchCount = -1;
+		global.fetch = () => {
+			fetchCount++;
+			return mockAddOrUpdate(hyperlinks[fetchCount]);
+		}
 
-	it('updates hyperlinks with synced versions', async () => {
-		const hyperlinks = await Data.syncHyperlinks();
-		expect(hyperlinks[0].dirty).toBe(undefined);
-		expect(hyperlinks[1].dirty).toBe(undefined);
-		expect(hyperlinks[0].createdOn).not.toBe(hyperlinks[0].updatedOn);
-		expect(hyperlinks[1].createdOn).not.toBe(hyperlinks[1].updatedOn);
+		// Act
+		const syncedHyperlinks = await Data.syncHyperlinks();
+		
+		// Assert
+		expect(syncedHyperlinks.length > 1).toBeTruthy();
+		for(var i = 0; i < syncedHyperlinks.length; i++) {
+			const syncedHyperlink = syncedHyperlinks[i];
+			expect(syncedHyperlink.dirty).toBe(undefined);
+			expect(syncedHyperlink.createdOn).not.toBe(syncedHyperlink.updatedOn);
+		}
 	});
 
 });

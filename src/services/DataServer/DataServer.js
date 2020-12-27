@@ -1,33 +1,18 @@
+import { mockGet, mockAddOrUpdate } from '../../services/DataServer/DataServerMock';
+
 // Simulate calls to server
 class DataServer {
 
 	async getHyperlinks() {
-		return new Promise((resolve, reject) => {
-			setTimeout(() => {
-				resolve();
-			}, 500);
-		});
+		const response = await mockGet(500);
+		const hyperlinks = await response.json();
+		return hyperlinks;
 	}
 
 	async addOrUpdateHyperlink(hyperlink) {
-		return new Promise((resolve, reject) => {
-			setTimeout(() => {
-				let syncedHyperlink = this.alterSyncedHyperlink(hyperlink);
-				resolve(syncedHyperlink);
-			}, 500);
-		});
-	}
-
-	// For testing -- alters hyperlink the same as a server would
-	alterSyncedHyperlink(hyperlink) {
-		let syncedHyperlink = Object.assign({}, hyperlink);  // make copy
-		syncedHyperlink.updatedOn = this.getISOTimestamp();
-		delete syncedHyperlink.dirty;
-		return syncedHyperlink;
-	}
-	
-	getISOTimestamp() {
-		return (new Date()).toISOString();
+		const response = await mockAddOrUpdate(hyperlink, 500);
+		const hyperlinks = await response.json();
+		return hyperlinks && hyperlinks.find(h => h.id === hyperlink.id);
 	}
 
 }
