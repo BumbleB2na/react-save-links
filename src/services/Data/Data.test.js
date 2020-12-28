@@ -1,8 +1,8 @@
 import Data from './Data';
 
 // mocks
+import DataServerMock from '../../services/DataServer/DataServerMock';
 import { mockLocalHyperlinks } from '../../services/DataLocal/DataLocalMock';
-import { mockGet, mockAddOrUpdate } from '../../services/DataServer/DataServerMock';
 jest.mock('../../services/DataLocal/DataLocal');
 
 
@@ -111,9 +111,9 @@ describe('with mock data', () => {
 		const hyperlinks = await Data.getHyperlinks();
 		// TODO: Consider using MSW instead for sharing mocked endpoints between tests and app code: https://kentcdodds.com/blog/stop-mocking-fetch
 		let fetchCount = -1;
-		global.fetch = () => {
+		global.fetch = () => {  // mock, where each mock is different
 			fetchCount++;
-			return mockAddOrUpdate(hyperlinks[fetchCount]);
+			return DataServerMock.mockAddOrUpdate(hyperlinks[fetchCount]);
 		}
 
 		// Act
