@@ -1,8 +1,8 @@
 import Data from './Data';
 
 // mocks
+import DataServerMock from '../../services/DataServer/DataServerMock';
 import { mockLocalHyperlinks } from '../../services/DataLocal/DataLocalMock';
-import { mockGet, mockAddOrUpdate } from '../../services/DataServer/DataServerMock';
 jest.mock('../../services/DataLocal/DataLocal');
 
 
@@ -113,7 +113,7 @@ describe('with mock data', () => {
 		let fetchCount = -1;
 		global.fetch = () => {
 			fetchCount++;
-			return mockAddOrUpdate(hyperlinks[fetchCount]);
+			return DataServerMock.mockAddOrUpdate(hyperlinks[fetchCount]);
 		}
 
 		// Act
