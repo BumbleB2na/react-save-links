@@ -35,7 +35,7 @@ describe('syncHyperlink()', () => {
 		expect(syncedHyperlink.dirty).toBe(undefined);
 		expect(syncedHyperlink.createdOn).not.toBe(syncedHyperlink.updatedOn);
 	});
-
+	
 	it('handles non-success response from Api', async () => {
 		const hyperlinks = await Data.getHyperlinks();
 		const hyperlink = hyperlinks[0];
